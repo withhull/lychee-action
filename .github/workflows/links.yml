@@ -6,8 +6,14 @@ on:
   schedule:
     - cron: "00 18 * * *"
 
+concurrency:
+  group: links-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   linkChecker:
+    if: github.event_name == 'workflow_dispatch' || vars.HULL_LINK_CHECKS_ENABLED == 'true'
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     permissions:
       issues: write # required for peter-evans/create-issue-from-file
